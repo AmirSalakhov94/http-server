@@ -1,10 +1,11 @@
-package tech.itpark.http.guava;
+package tech.itpark.http.util;
 
-public class Bytes {
-    /**
-     * from guava library (as it is)
-     */
-    public static int indexOf(byte[] array, byte[] target, int start, int end) {
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
+public class BytesUtil {
+
+    public static int indexOf(byte[] array, byte[] target, int start) {
         if (target.length == 0) {
             return 0;
         }
@@ -16,7 +17,7 @@ public class Bytes {
                     continue outer;
                 }
             }
-            return i;
+            return i + target.length;
         }
         return -1;
     }
