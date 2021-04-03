@@ -7,27 +7,28 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+import static tech.itpark.http.HttpConstants.CONTENT_LENGTH;
+
 @UtilityClass
 public class ResponseUtil {
 
     public void fill(final Response response, BufferedOutputStream out) throws IOException {
-        response.setStatusCode(200);
-        response.setStatusText("Ok");
-        byte[] body = response.getBody();
-        byte[] responseBody = getResponseBody(body, "\r\n".getBytes());
+        final var body = response.getBody();
+        final var responseBody = getResponseBody(body, "\r\n".getBytes());
         if (responseBody != null) {
-            response.getHeaders().put("Content-Length", responseBody.length);
+            response.getHeaders().put(CONTENT_LENGTH, responseBody.length);
         }
 
-        String s = response.getVersion().getDescription() + " " + response.getStatusCode() + " " + response.getStatusText() + "\r\n" +
-                response.getHeaders().keySet().stream()
-                        .map(key -> key + ":" + response.getHeaders().get(key) + "\r\n")
-                        .collect(Collectors.joining()) +
-                "\r\n";
-        byte[] responseAll = s.getBytes();
-        if (responseBody != null) {
-            responseAll = getResponseBody(s.getBytes(), responseBody);
-        }
+        final var httpBody =
+                response.getVersion().getDescription() + " " + response.getStatusCode() + " " + response.getStatusText()
+                        + "\r\n" +
+                        response.getHeaders().keySet().stream()
+                                .map(key -> key + ":" + response.getHeaders().get(key) + "\r\n")
+                                .collect(Collectors.joining()) +
+                        "\r\n";
+        final var responseAll = (responseBody != null)
+                ? getResponseBody(httpBody.getBytes(), responseBody)
+                : httpBody.getBytes();
         out.write(responseAll);
     }
 

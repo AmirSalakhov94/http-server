@@ -1,5 +1,6 @@
 package tech.itpark.http.model;
 
+import lombok.Builder;
 import tech.itpark.http.enums.HttpVersion;
 
 import java.util.HashMap;
@@ -9,8 +10,10 @@ public class HttpResponse implements Response {
 
     private Map<String, Object> headers = new HashMap<>();
     private HttpVersion version;
-    private int code;
-    private String text;
+    @Builder.Default
+    private int code = 200;
+    @Builder.Default
+    private String text = "Ok";
     private byte[] body;
 
     @Override

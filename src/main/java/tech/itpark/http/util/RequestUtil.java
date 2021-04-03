@@ -16,32 +16,23 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static tech.itpark.http.HttpConstants.*;
 import static tech.itpark.http.enums.HttpVersion.HTTP_1_1;
 
 @UtilityClass
 public class RequestUtil {
 
-    private static final String CONTENT_LENGTH = "Content-Length";
-    private static final byte[] HTTP_START_LINE_AND_HEADER_SEPARATOR = new byte[]{'\r', '\n', '\r', '\n'};
-    private static final byte[] HTTP_LINE_SEPARATOR = new byte[]{'\r', '\n'};
-    private static final int BUFFER_SIZE = 4096;
-
     public Request fill(final BufferedInputStream in) throws IOException {
         final var buffer = new byte[BUFFER_SIZE]; // request line - headers < 4Кб
         in.mark(BUFFER_SIZE);
 
-        // Content-Length | GET -> фиговый
         final var read = in.read(buffer);
-
-        // mark + reset + markSupported
-
         final var requestLineEndIndex = BytesUtil.indexOf(buffer, HTTP_LINE_SEPARATOR, 0);
         if (requestLineEndIndex == -1) {
             throw new MalFormedRequestException();
         }
 
         String[] startLineParts = getStartLineParts(buffer, requestLineEndIndex);
-
         final var method = startLineParts[0];
         if (!HttpMethod.contains(method)) {
             throw new HttpMethodNotSupportedException("Not supported http method: " + method);
@@ -58,11 +49,11 @@ public class RequestUtil {
         }
 
         final var splitUri = uri.split("\\?");
-        final var path = splitUri[0];
         Map<String, Object> params = new HashMap<>();
         if (splitUri.length == 2) {
             params = getUrlParams(splitUri[1]);
         }
+        final var path = splitUri[0];
         final var headers = getHeaders(buffer, requestLineEndIndex);
         final var httpMethod = HttpMethod.valueOf(method);
 
@@ -98,6 +89,9 @@ public class RequestUtil {
 
     private Map<String, Object> getUrlParams(final String strParam) {
         final var paramsMap = new HashMap<String, Object>();
+        if (strParam == null || strParam.isEmpty())
+            return paramsMap;
+
         final var params = strParam.split("&");
         for (String p : params) {
             final var splitParams = p.split("=");
