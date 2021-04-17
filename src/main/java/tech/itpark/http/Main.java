@@ -1,11 +1,9 @@
 package tech.itpark.http;
 
+import tech.itpark.http.connection.handler.ConnectionHandler;
+import tech.itpark.http.connection.handler.ConnectionHandlerImpl;
 import tech.itpark.http.container.Container;
-import tech.itpark.http.container.listener.ContainerListener;
-import tech.itpark.http.container.listener.DefaultContainerListener;
 import tech.itpark.http.handler.HandlerHttpServer;
-
-import java.util.Collections;
 
 import static tech.itpark.http.HttpConstants.CONTENT_TYPE;
 import static tech.itpark.http.HttpConstants.TEXT_PLAIN;
@@ -22,8 +20,8 @@ public class Main {
             response.addHeader(CONTENT_TYPE, TEXT_PLAIN);
             response.setBody(request.getBody());
         });
-        ContainerListener containerListener = new DefaultContainerListener(handlerHttpServer);
-        Container container = new Container(Collections.singletonList(containerListener));
+        ConnectionHandler connectionHandlerListener = new ConnectionHandlerImpl(handlerHttpServer);
+        Container container = new Container(connectionHandlerListener);
         container.listen(9999);
     }
 }

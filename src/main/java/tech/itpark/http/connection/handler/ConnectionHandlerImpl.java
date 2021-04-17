@@ -1,4 +1,4 @@
-package tech.itpark.http.container.listener;
+package tech.itpark.http.connection.handler;
 
 import lombok.RequiredArgsConstructor;
 import tech.itpark.http.enums.HttpVersion;
@@ -16,12 +16,12 @@ import java.io.IOException;
 import java.net.Socket;
 
 @RequiredArgsConstructor
-public class DefaultContainerListener implements ContainerListener {
+public class ConnectionHandlerImpl implements ConnectionHandler {
 
     private final HandlerHttpServer handlerHttpServer;
 
     @Override
-    public void listen(Socket socket) {
+    public void onNewConnection(Socket socket) {
         try (
                 socket;
                 final var in = new BufferedInputStream(socket.getInputStream());
