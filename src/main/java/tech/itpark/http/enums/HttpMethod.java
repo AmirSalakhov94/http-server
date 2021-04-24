@@ -7,15 +7,15 @@ public enum HttpMethod {
     GET,
     POST;
 
-    private static Set<String> _values = new HashSet<>();
+    private static Set<String> httpMethods = new HashSet<>();
 
     static {
         for (HttpMethod choice : HttpMethod.values()) {
-            _values.add(choice.name());
+            httpMethods.add(choice.name());
         }
     }
 
     public static boolean contains(String value) {
-        return _values.contains(value);
+        return httpMethods.contains(value);
     }
 }
